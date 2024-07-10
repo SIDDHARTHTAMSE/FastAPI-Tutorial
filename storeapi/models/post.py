@@ -1,3 +1,4 @@
+from fastapi import APIRouter
 from pydantic import BaseModel
 
 
@@ -21,3 +22,6 @@ class Comment(CommentIn):
 class UserPostWithComment(BaseModel):
     post: UserPost
     comments: list[Comment]
+
+
+router = APIRouter()

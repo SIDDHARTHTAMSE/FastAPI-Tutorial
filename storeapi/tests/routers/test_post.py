@@ -24,7 +24,7 @@ async def created_comment(async_client: AsyncClient, created_post: dict):
     return await create_comment("Test Comment", created_post["id"], async_client)
 
 
-@pytest.mark.anyio
+@pytest.mark.anyio  
 async def test_create_post(async_client: AsyncClient):
     body = "Test Post"
 

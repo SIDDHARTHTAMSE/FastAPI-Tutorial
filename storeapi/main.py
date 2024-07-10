@@ -1,11 +1,15 @@
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, APIRouter
+from storeapi.models.post import router as post_router
+
+from contextlib import asynccontextmanager
+from storeapi.database import database
 from storeapi.models.post import (
     UserPost,
     UserPostIn,
     Comment,
     CommentIn,
-    UserPostWithComment
+    UserPostWithComment,
 )
 app = FastAPI()
 
@@ -16,6 +20,7 @@ app = FastAPI()
 
 
 # Our social media API: adding posts
+
 
 post_table = {}
 comment_table = {}
@@ -57,6 +62,14 @@ async def get_comment_on_post(post_id: int):
         comment for comment in comment_table.values() if comment["post_id"] == post_id
     ]
 
+comments = []
+
+for c in comment_table.values():
+    if c["post_id"] == 1:
+        comments.append(c)
+
+print(comments)
+
 
 @app.get("/post/{post_id}", response_model=UserPostWithComment)
 async def get_post_with_comments(post_id: int):
@@ -70,6 +83,14 @@ async def get_post_with_comments(post_id: int):
     }
 
 
+# Database connection with lifespan events in FastAPI
 
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    await database.connect()
+    yield
+    await database.disconnect()
 
+app = FastAPI(lifespan=lifespan)
 
+app.include_router(post_router)
