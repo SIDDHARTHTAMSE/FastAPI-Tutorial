@@ -23,13 +23,12 @@ comment_table = sqlalchemy.Table(
     sqlalchemy.Column("post_id", sqlalchemy.ForeignKey("post.id"), nullable=False)
 )
 
-print(config.DEV_DATABASE_URL, "*****")
 
 engine = sqlalchemy.create_engine(
-    config.DEV_DATABASE_URL, connect_args={"check_same_thread": False}
+    config.DATABASE_URL, connect_args={"check_same_thread": False}
 )
 
 metadata.create_all(engine)
 database = databases.Database(
-    config.DEV_DATABASE_URL, force_rollback=config.DB_FORCE_ROLL_BACK
+    config.DATABASE_URL, force_rollback=config.DB_FORCE_ROLL_BACK
 )

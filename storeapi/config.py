@@ -5,7 +5,7 @@ from pydantic import ConfigDict
 
 
 class BaseConfig(BaseSettings):
-    ENV_STATE: Optional[str] = "dev"
+    ENV_STATE: Optional[str] = None
     DATABASE_URL: Optional[str] = None
     class Config:
         env_file: str = ".env"
@@ -19,7 +19,7 @@ class GlobalConfig(BaseConfig):
 
 
 class DevConfig(GlobalConfig):
-    DEV_DATABASE_URL: str = "sqlite:///data.db"
+    DATABASE_URL: str = "sqlite:///data.db"
     class Config:
         env_prefix: str = "Dev_"
 
@@ -37,11 +37,7 @@ class TestConfig(GlobalConfig):
 
 @lru_cache()
 def get_config(env_state: str):
-    if env_state == "dev":
-        print("getting dev config")
     configs = {"dev": DevConfig, "prod": ProdConfig, "test": TestConfig}
-    print(configs[env_state]()
-          )
     return configs[env_state]()
 
 
