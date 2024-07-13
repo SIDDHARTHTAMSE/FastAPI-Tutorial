@@ -1,11 +1,14 @@
 from typing import AsyncGenerator, Generator
-
+import os
 import pytest
 from fastapi.testclient import TestClient
 from httpx import AsyncClient
 
-from storeapi.main import app
 from storeapi.main import post_table, comment_table
+
+os.environ["ENV_STATE"] = "test" #
+
+from storeapi.main import app
 
 
 @pytest.fixture(scope="session")

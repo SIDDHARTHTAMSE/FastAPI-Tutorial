@@ -1,7 +1,8 @@
 
 from fastapi import FastAPI, HTTPException, APIRouter
 from storeapi.models.post import router as post_router
-
+from fastapi import FastAPI
+from storeapi.config import config
 from contextlib import asynccontextmanager
 from storeapi.database import database
 from storeapi.models.post import (
@@ -12,7 +13,6 @@ from storeapi.models.post import (
     UserPostWithComment,
 )
 app = FastAPI()
-
 
 # @app.get("/")
 # async def root():
