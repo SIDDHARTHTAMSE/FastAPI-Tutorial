@@ -1,9 +1,9 @@
 
-from fastapi import FastAPI, HTTPException, APIRouter
-from storeapi.models.post import router as post_router
-from fastapi import FastAPI
-from storeapi.config import config
 from contextlib import asynccontextmanager
+
+from fastapi import FastAPI
+from fastapi import HTTPException
+
 from storeapi.database import database
 from storeapi.models.post import (
     UserPost,
@@ -12,11 +12,22 @@ from storeapi.models.post import (
     CommentIn,
     UserPostWithComment,
 )
-app = FastAPI()
 
-# @app.get("/")
-# async def root():
-#     return {"message": "Hello, world!"}
+# Database connection with lifespan events in FastAPI
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    await database.connect()
+    yield
+    await database.disconnect()
+
+app = FastAPI(lifespan=lifespan)
+
+
+@app.get("/")
+async def root():
+    return {"message": "Hello, world!, please go to /docs for swagger UI"}
 
 
 # Our social media API: adding posts
@@ -81,16 +92,3 @@ async def get_post_with_comments(post_id: int):
         "post": post,
         "comments": await get_comment_on_post(post_id)
     }
-
-
-# Database connection with lifespan events in FastAPI
-
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    await database.connect()
-    yield
-    await database.disconnect()
-
-app = FastAPI(lifespan=lifespan)
-
-app.include_router(post_router)
