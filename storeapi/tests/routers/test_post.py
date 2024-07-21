@@ -1,6 +1,8 @@
 import pytest
 from httpx import AsyncClient
 
+from storeapi.database import database
+
 
 async def create_post(body: str, async_client: AsyncClient) -> dict:
     response = await async_client.post("/post", json={"body": body})
@@ -24,6 +26,13 @@ async def created_comment(async_client: AsyncClient, created_post: dict):
     return await create_comment("Test Comment", created_post["id"], async_client)
 
 
+@pytest.fixture(autouse=True)
+async def reset_db():
+    await database.execute("DELETE FROM comments")
+    await database.execute("DELETE FROM post")
+    yield
+
+
 @pytest.mark.anyio  
 async def test_create_post(async_client: AsyncClient):
     body = "Test Post"
@@ -31,7 +40,10 @@ async def test_create_post(async_client: AsyncClient):
     response = await async_client.post("/post", json={"body": body})
 
     assert response.status_code == 201
-    assert {"id": 0, "body": body}.items() <= response.json().items()
+    response_json = response.json()
+    # assert {"id": 1, "body": body}.items() <= response.json().items()
+    assert response_json["body"] == body
+    assert "id" in response_json
 
 
 @pytest.mark.anyio
@@ -56,12 +68,16 @@ async def test_create_comment(async_client: AsyncClient, created_post: dict):
     response = await async_client.post(
         "/comment", json={"body": body, "post_id": created_post["id"]}
     )
-    assert response.status_code == 200
-    assert {
-        "id": 0,
-        "body": body,
-        "post_id": created_post["id"],
-    }.items() <= response.json().items()
+    assert response.status_code == 201
+    response_json = response.json()
+    assert response_json["body"] == body
+    assert response_json["post_id"] == created_post["id"]
+    assert "id" in response_json
+    # assert {
+    #     "id": 1,
+    #     "body": body,
+    #     "post_id": created_post["id"],
+    # }.items() <= response.json().items()
 
 
 @pytest.mark.anyio

@@ -9,6 +9,9 @@ class UserPostIn(BaseModel):
 class UserPost(UserPostIn):
     id: int
 
+    class Config:
+        orm_mode = True
+
 
 class CommentIn(BaseModel):
     body: str
@@ -17,6 +20,9 @@ class CommentIn(BaseModel):
 
 class Comment(CommentIn):
     id: int
+
+    class Config:
+        orm_mode = True
 
 
 class UserPostWithComment(BaseModel):

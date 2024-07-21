@@ -3,9 +3,7 @@ import os
 import pytest
 from fastapi.testclient import TestClient
 from httpx import AsyncClient
-
-from storeapi.main import post_table, comment_table
-
+from storeapi.database import database
 os.environ["ENV_STATE"] = "test" #
 
 from storeapi.main import app
@@ -23,9 +21,9 @@ def client() -> Generator:
 
 @pytest.fixture(autouse=True)
 async def db() -> AsyncGenerator:
-    post_table.clear()
-    comment_table.clear()
+    await database.connect()
     yield
+    await database.disconnect()
 
 
 @pytest.fixture()
