@@ -1,12 +1,12 @@
 from functools import lru_cache
 from typing import Optional
 from pydantic_settings import BaseSettings
-from pydantic import ConfigDict
 
 
 class BaseConfig(BaseSettings):
     ENV_STATE: Optional[str] = None
     DATABASE_URL: Optional[str] = None
+
     class Config:
         env_file: str = ".env"
         env_prefix: str = ""
@@ -20,8 +20,10 @@ class GlobalConfig(BaseConfig):
 
 class DevConfig(GlobalConfig):
     DATABASE_URL: str = "sqlite:///data.db"
+
     class Config:
         env_prefix: str = "Dev_"
+
 
 class ProdConfig(GlobalConfig):
     class Config:
@@ -31,6 +33,7 @@ class ProdConfig(GlobalConfig):
 class TestConfig(GlobalConfig):
     DATABASE_URL: Optional[str] = "sqlite:///test.db"  # Type annotation added here
     DB_FORCE_ROLL_BACK: bool = True
+
     class Config:
         env_prefix: str = "TEST_"
 

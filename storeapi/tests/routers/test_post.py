@@ -41,7 +41,6 @@ async def test_create_post(async_client: AsyncClient):
 
     assert response.status_code == 201
     response_json = response.json()
-    # assert {"id": 1, "body": body}.items() <= response.json().items()
     assert response_json["body"] == body
     assert "id" in response_json
 
@@ -58,6 +57,7 @@ async def test_get_all_post(async_client: AsyncClient, created_post: dict):
     response = await async_client.get("/post")
 
     assert response.status_code == 200
+    print(response.json())
     assert response.json() == [created_post]
 
 
