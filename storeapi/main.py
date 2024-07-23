@@ -1,4 +1,4 @@
-
+import logging
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
@@ -14,6 +14,8 @@ from storeapi.models.post import (
 )
 
 # Database connection with lifespan events in FastAPI
+
+logger = logging.getLogger(__name__)
 
 
 @asynccontextmanager
