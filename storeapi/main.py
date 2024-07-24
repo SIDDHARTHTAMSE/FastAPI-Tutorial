@@ -4,6 +4,8 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi import HTTPException
 
+from storeapi.tests.routers.user import router
+
 from storeapi.database import comment_table, post_table, database
 from storeapi.models.post import (
     UserPost,
@@ -25,6 +27,7 @@ async def lifespan(app: FastAPI):
     await database.disconnect()
 
 app = FastAPI(lifespan=lifespan)
+app.include_router(router)
 
 
 @app.get("/")

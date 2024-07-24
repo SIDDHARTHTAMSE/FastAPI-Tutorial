@@ -5,3 +5,8 @@ databases[aiosqlite]
 python-dotenv
 pydantic-settings
 databases
+rich
+asgi-correlation-id
+python-jose
+python-multipart
+passlib[bcrypt]

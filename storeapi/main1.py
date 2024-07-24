@@ -5,6 +5,7 @@ from fastapi import FastAPI
 from storeapi.database import database
 from storeapi.logging_conf import configure_logging
 from storeapi.models.post import router as post_router
+from storeapi.tests.routers.user import router as user_router
 
 
 @asynccontextmanager
@@ -18,3 +19,4 @@ app = FastAPI(lifespan=lifespan)
 
 
 app.include_router(post_router)
+app.include_router(user_router)
