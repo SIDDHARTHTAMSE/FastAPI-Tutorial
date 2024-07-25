@@ -3,10 +3,12 @@ import sqlalchemy
 from pydantic_settings import BaseSettings
 from sqlalchemy import create_engine
 
+
 from storeapi.config import config
 
 
 metadata = sqlalchemy.MetaData()
+
 
 post_table = sqlalchemy.Table(
     "post",

@@ -6,7 +6,8 @@ from httpx import AsyncClient
 from storeapi.database import database, user_table
 from storeapi.main import app
 
-os.environ["ENV_STATE"] = "test"  #
+
+os.environ["ENV_STATE"] = "test"
 
 
 @pytest.fixture(scope="session")
