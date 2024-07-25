@@ -1,8 +1,9 @@
 import logging
+from typing import Annotated
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
-from fastapi import HTTPException, Request
+from fastapi import Depends, HTTPException, Request
 
 from storeapi.tests.routers.user import router
 
@@ -46,11 +47,9 @@ async def find_post(post_id: int):
 
 
 @app.post("/post", response_model=UserPost, status_code=201)
-async def create_post(post: UserPostIn, request: Request):
+async def create_post(post: UserPostIn, current_user: Annotated[User, Depends(get_current_user)]):
 
-    current_user: User =await get_current_user(await oauth2_schema(request))
-
-    data = post.dict()
+    data = {**post.dict(), "user_id": current_user.id}
     query = post_table.insert().values(data)
     last_record_id = await database.execute(query)
     return {**data, "id": last_record_id}
@@ -63,14 +62,12 @@ async def get_all_post():
 
 
 @app.post("/comment", response_model=Comment, status_code=201)
-async def create_comment(comment: CommentIn, request: Request):
-
-    current_user: User =await get_current_user(await oauth2_schema(request))
+async def create_comment(comment: CommentIn, current_user: Annotated[User, Depends(get_current_user)]):
 
     post = await find_post(comment.post_id)
     if not post:
         raise HTTPException(status_code=404, detail="Post not found")
-    data = comment.dict()
+    data = {**comment.dict(), "user_id": current_user.id}
     query = comment_table.insert().values(data)
     last_record_id = await database.execute(query)
     return {**data, "id": last_record_id}
