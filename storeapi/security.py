@@ -2,6 +2,7 @@ import datetime
 import logging
 
 from fastapi import HTTPException, status
+from fastapi.security import OAuth2PasswordBearer
 from jose import ExpiredSignatureError, JWTError, jwt
 from passlib.context import CryptContext
 
@@ -11,6 +12,7 @@ logger = logging.getLogger(__name__)
 
 SECRETE_KEY = "9jhdjhd783793279239weijjhjk98y"
 ALGORITHM = "HS256"
+oauth2_schema = OAuth2PasswordBearer(tokenUrl="token")
 pwd_context = CryptContext(schemes=["bcrypt"])
 
 credentials_exception = HTTPException(

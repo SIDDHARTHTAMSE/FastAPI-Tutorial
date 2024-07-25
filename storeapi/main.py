@@ -2,7 +2,7 @@ import logging
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
-from fastapi import HTTPException
+from fastapi import HTTPException, Request
 
 from storeapi.tests.routers.user import router
 
@@ -14,6 +14,8 @@ from storeapi.models.post import (
     CommentIn,
     UserPostWithComment,
 )
+from storeapi.models.user import User
+from storeapi.security import get_current_user, oauth2_schema
 
 # Database connection with lifespan events in FastAPI
 
@@ -44,7 +46,10 @@ async def find_post(post_id: int):
 
 
 @app.post("/post", response_model=UserPost, status_code=201)
-async def create_post(post: UserPostIn):
+async def create_post(post: UserPostIn, request: Request):
+
+    current_user: User =await get_current_user(await oauth2_schema(request))
+
     data = post.dict()
     query = post_table.insert().values(data)
     last_record_id = await database.execute(query)
@@ -58,7 +63,10 @@ async def get_all_post():
 
 
 @app.post("/comment", response_model=Comment, status_code=201)
-async def create_comment(comment: CommentIn):
+async def create_comment(comment: CommentIn, request: Request):
+
+    current_user: User =await get_current_user(await oauth2_schema(request))
+
     post = await find_post(comment.post_id)
     if not post:
         raise HTTPException(status_code=404, detail="Post not found")
