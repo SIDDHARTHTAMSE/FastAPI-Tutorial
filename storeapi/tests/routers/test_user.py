@@ -8,7 +8,7 @@ async def register_user(async_client: AsyncClient, email: str, password: str):
 
 @pytest.mark.anyio
 async def test_register_user(async_client: AsyncClient):
-    response = await register_user(async_client, "test68020@example.net", "1234")
+    response = await register_user(async_client, "test61027@example.net", "1234")
     # Print or log the response content for debugging
     print(response.json())
     assert response.status_code == 201
